@@ -28,6 +28,7 @@ opentelemetry_sdk = { version = "0.23.0", features = ["rt-tokio"] }
 opentelemetry-otlp = { version = "0.16.0", features = ["grpc-tonic"] }
 tonic = "0.12.0"
 tracing-appender = "0.2.3"
+nanoid = "0.4.0"
 
 [dev-dependencies]
 axum = "0.7.5"
