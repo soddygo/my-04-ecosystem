@@ -387,8 +387,10 @@ checksum = "a21f936df1771bf62b77f047b726c4625ff2e8aa607c01ec06e5a05bd8463401"
 dependencies = [
  "android-tzdata",
  "iana-time-zone",
+ "js-sys",
  "num-traits",
  "serde",
+ "wasm-bindgen",
  "windows-targets 0.52.6",
 ]
 
@@ -624,6 +626,7 @@ dependencies = [
  "blake3",
  "bytes",
  "chacha20poly1305",
+ "chrono",
  "console-subscriber",
  "dashmap",
  "futures",
@@ -636,6 +639,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_with",
+ "serde_yaml",
  "sqlx",
  "thiserror",
  "time",
@@ -2010,6 +2014,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde_yaml"
+version = "0.9.34+deprecated"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a8b1a1a2ebf674015cc02edccce75287f1a0130d394307b36743c2f5d504b47"
+dependencies = [
+ "indexmap 2.2.6",
+ "itoa",
+ "ryu",
+ "serde",
+ "unsafe-libyaml",
+]
+
+[[package]]
 name = "sha1"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2150,6 +2167,8 @@ dependencies = [
  "smallvec",
  "sqlformat",
  "thiserror",
+ "tokio",
+ "tokio-stream",
  "tracing",
  "url",
 ]
@@ -2185,9 +2204,11 @@ dependencies = [
  "sha2",
  "sqlx-core",
  "sqlx-mysql",
+ "sqlx-postgres",
  "sqlx-sqlite",
  "syn 1.0.109",
  "tempfile",
+ "tokio",
  "url",
 ]
 
@@ -2743,6 +2764,12 @@ dependencies = [
  "crypto-common",
  "subtle",
 ]
+
+[[package]]
+name = "unsafe-libyaml"
+version = "0.2.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "673aac59facbab8a9007c7f6108d11f63b603f7cabff99fabf650fea5c32b861"
 
 [[package]]
 name = "url"

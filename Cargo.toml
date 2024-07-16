@@ -3,6 +3,8 @@ name = "ecosystem"
 version = "0.1.0"
 edition = "2021"
 
+[profile.dev.package.sqlx-macros]
+opt-level = 3
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
@@ -20,7 +22,7 @@ serde_with = "3.8.1"
 tracing = "0.1.40"
 tracing-opentelemetry = "0.24.0"
 tracing-subscriber = "0.3.18"
-sqlx = "0.7.4"
+sqlx = { version = "0.7.4", features = ["runtime-tokio", "postgres"] }
 blake3 = "1.5.1"
 bytes = "1.6.0"
 axum = { version = "0.7.5", features = ["macros"] }
@@ -29,6 +31,8 @@ opentelemetry-otlp = { version = "0.16.0", features = ["grpc-tonic"] }
 tonic = "0.12.0"
 tracing-appender = "0.2.3"
 nanoid = "0.4.0"
+chrono = { version =  "0.4.38" ,features = ["serde"]}
+serde_yaml = "0.9.34"
 
 [dev-dependencies]
 axum = "0.7.5"

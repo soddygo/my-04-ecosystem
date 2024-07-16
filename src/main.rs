@@ -13,6 +13,10 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{fmt, Layer};
 
+
+mod shorten;
+
+use shorten::init_shorten_router;
 #[tokio::main]
 async fn main() -> Result<()> {
     let tracer = init_trace()?;
@@ -43,7 +47,7 @@ async fn main() -> Result<()> {
         .init();
 
     // build our application with a single route
-    let shorten_router=init_shorten_router()?;
+    let shorten_router = init_shorten_router()?;
     let app = Router::new()
         .merge(shorten_router)
         .route("/", get(|| async { "Hello, World!" }));
@@ -52,17 +56,6 @@ async fn main() -> Result<()> {
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await?;
     Ok(())
-}
-
-///init shorten router
-fn init_shorten_router()->Result<Router>{
-
-    let shorten_router= Router::new()
-        .route("/:id", get(|| async { "Hello, World! id" }))
-        .route("/create",get(|| async { "Hello, World! create" }))
-        ;
-
-    Ok(shorten_router)
 }
 
 /// opentelemetry-otlp tracer init
