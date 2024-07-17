@@ -1,11 +1,11 @@
+use std::sync::Arc;
+
 use anyhow::anyhow;
 use axum::extract::{Path, State};
-use axum::response::IntoResponse;
-use axum::{http::StatusCode, Json};
+use axum::Json;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::{Decode, FromRow};
-use std::sync::Arc;
 
 use crate::shorten::{AppError, AppState};
 
