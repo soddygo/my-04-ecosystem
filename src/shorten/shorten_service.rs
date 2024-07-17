@@ -1,18 +1,15 @@
-use crate::shorten::{AppError, AppState};
+use anyhow::anyhow;
 use axum::extract::{Path, State};
 use axum::response::IntoResponse;
-use axum::Json;
+use axum::{http::StatusCode, Json};
 use chrono::{DateTime, Utc};
-use futures::StreamExt;
-use serde::Deserialize;
-use sqlx::{Decode, Error, FromRow};
-use std::future::Future;
+use serde::{Deserialize, Serialize};
+use sqlx::{Decode, FromRow};
 use std::sync::Arc;
 
-use anyhow::{Ok, Result};
-use sqlx::postgres::PgQueryResult;
+use crate::shorten::{AppError, AppState};
 
-#[derive(FromRow, Deserialize)]
+#[derive(FromRow, Deserialize, Serialize)]
 pub(crate) struct Shorten {
     #[sqlx(default)]
     id: i32,
@@ -26,9 +23,7 @@ pub(crate) struct Shorten {
 pub(crate) async fn create_shorten_link(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<serde_json::Value>,
-) -> Result<impl IntoResponse, AppError> {
-    // todo!()
-
+) -> Result<Json<Shorten>, AppError> {
     let url = payload["url"].as_str().unwrap();
 
     //查询数据库有无数据记录，根据url查找
@@ -37,43 +32,45 @@ pub(crate) async fn create_shorten_link(
         .fetch_optional(&state.pool)
         .await?;
 
-    match one_data {
+    let shorten_one: Shorten = match one_data {
         Some(data) => {
             //更新数据库
             let update_id = data.id;
-            sqlx::query("UPDATE shorten SET url = $1 WHERE id = $2")
+            sqlx::query_as("UPDATE shorten SET url = $1 WHERE id = $2  RETURNING *")
                 .bind(url)
                 .bind(update_id)
-                .execute(&state.pool)
-                .await?;
+                .fetch_one(&state.pool)
+                .await?
         }
         None => {
             //插入数据库
-            sqlx::query("INSERT INTO shorten (url) VALUES ($1) RETURNING *")
+            sqlx::query_as("INSERT INTO shorten (url) VALUES ($1) RETURNING *")
                 .bind(url)
-                .execute(&state.pool)
-                .await?;
+                .fetch_one(&state.pool)
+                .await?
         }
-    }
+    };
 
-    Ok("Hello, World!")
+    // let id = shorten_one
+    let json = Json(shorten_one);
+    return Ok(json);
 }
 
 pub(crate) async fn get_shorten_link(
     State(state): State<Arc<AppState>>,
     Path(id): Path<String>,
-) -> Result<impl IntoResponse, AppError> {
-    let shorten: Option<Shorten> = sqlx::query("SELECT * FROM shorten WHERE id = $1")
+) -> Result<Json<Shorten>, AppError> {
+    let shorten: Option<Shorten> = sqlx::query_as("SELECT * FROM shorten WHERE id = $1")
         .bind(id)
         .fetch_optional(&state.pool)
         .await?;
 
+    // if let Some(data) = shorten {
+    //     let json = Json(data);
+    //     return Ok(json);
+    // }
     match shorten {
-        Some(data) => {
-            return data.url.into_response();
-        }
-        None => {
-            return anyhow::anyhow!("not found");
-        }
-    };
+        Some(data) => Ok(Json(data)),
+        None => Err(AppError::AnyError(anyhow!("Resource not found"))),
+    }
 }

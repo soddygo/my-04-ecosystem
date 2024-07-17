@@ -42,6 +42,9 @@ AppError {
 
     #[error("general error: {0}")]
     AnyError(#[from] anyhow::Error),
+
+    #[error("Not found: {0}")]
+    NotFound(String),
 }
 
 impl IntoResponse for AppError {
