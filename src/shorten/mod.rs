@@ -20,11 +20,17 @@ struct AppState {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Config {
+struct DataBase {
     user: String,
     password: String,
     host: String,
     dbname: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Config {
+    //重命名为“database”
+    data_base: DataBase,
 }
 
 #[derive(Debug, Error)]
@@ -55,9 +61,10 @@ impl IntoResponse for AppError {
 impl Config {
     //get db url
     fn get_db_url(self) -> String {
+        let database = self.data_base;
         let url = format!(
             "DATABASE_URL=postgres://{}:{}@{}/{}",
-            self.user, self.password, self.host, self.dbname
+            database.user, database.password, database.host, database.dbname
         );
         info!("db url:{}", url);
         return url;
