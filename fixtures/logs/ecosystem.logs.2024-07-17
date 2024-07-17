@@ -1,3 +1,0 @@
-  [2m2024-07-17T07:01:15.360611Z[0m [32m INFO[0m [1;32mecosystem::shorten[0m[32m: [32mdb url:postgres://postgres:postgres@localhost/chat[0m
-    [2;3mat[0m src/shorten/mod.rs:70 [2;3mon[0m main
-
