@@ -5,8 +5,7 @@ use anyhow::Result;
 use axum::extract::Path;
 use axum::response::{IntoResponse, Response};
 use axum::routing::{get, post};
-use axum::Router;
-use http::StatusCode;
+use axum::{http::status::StatusCode, Router};
 use serde::{Deserialize, Serialize};
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Pool, Postgres};
@@ -29,9 +28,9 @@ struct Config {
 }
 
 #[derive(Debug, Error)]
-enum AppError {
+pub(crate) enum AppError {
     #[error("data error")]
-    DbError(#[from] sqlx::error),
+    DbError(#[from] sqlx::Error),
 
     #[error("general error: {0}")]
     AnyError(#[from] anyhow::Error),

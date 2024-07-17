@@ -13,7 +13,6 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{fmt, Layer};
 
-
 mod shorten;
 
 use shorten::init_shorten_router;
@@ -47,7 +46,7 @@ async fn main() -> Result<()> {
         .init();
 
     // build our application with a single route
-    let shorten_router = init_shorten_router()?;
+    let shorten_router = init_shorten_router().await?;
     let app = Router::new()
         .merge(shorten_router)
         .route("/", get(|| async { "Hello, World!" }));

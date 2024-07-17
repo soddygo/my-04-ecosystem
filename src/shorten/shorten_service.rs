@@ -5,14 +5,15 @@ use axum::Json;
 use chrono::{DateTime, Utc};
 use futures::StreamExt;
 use serde::Deserialize;
-use sqlx::{Error, FromRow};
+use sqlx::{Decode, Error, FromRow};
 use std::future::Future;
 use std::sync::Arc;
 
 use anyhow::Result;
+use sqlx::postgres::PgQueryResult;
 
-#[derive(FromRow<PgRow>, Deserialize)]
-struct Shorten {
+#[derive(FromRow, Deserialize,Decode)]
+pub(crate) struct Shorten {
     #[sqlx(default)]
     id: i32,
     #[sqlx(default)]
@@ -40,18 +41,18 @@ pub(crate) async fn create_shorten_link(
         Some(data) => {
             //更新数据库
             let update_id = data.id;
-            sqlx::query("UPDATE shorten SET url = $1 WHERE id = $2")
+          sqlx::query("UPDATE shorten SET url = $1 WHERE id = $2")
                 .bind(url)
                 .bind(update_id)
                 .execute(&state.pool)
-                .await?
+                .await?;
         }
         None => {
             //插入数据库
             sqlx::query("INSERT INTO shorten (url) VALUES ($1) RETURNING *")
                 .bind(url)
                 .execute(&state.pool)
-                .await?
+                .await?;
         }
     }
 
