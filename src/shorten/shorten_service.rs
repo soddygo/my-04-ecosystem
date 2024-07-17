@@ -12,7 +12,7 @@ use std::sync::Arc;
 use anyhow::Result;
 use sqlx::postgres::PgQueryResult;
 
-#[derive(FromRow, Deserialize,Decode)]
+#[derive(FromRow, Deserialize)]
 pub(crate) struct Shorten {
     #[sqlx(default)]
     id: i32,
