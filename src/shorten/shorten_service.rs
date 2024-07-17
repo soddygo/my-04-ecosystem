@@ -19,16 +19,21 @@ pub(crate) struct Shorten {
     created_at: DateTime<Utc>,
 }
 
+#[derive(Debug,Deserialize,Clone)]
+pub(crate) struct ShortenReq{
+    url: String,
+}
+
 /// create shorten link by
 pub(crate) async fn create_shorten_link(
     State(state): State<Arc<AppState>>,
-    Json(payload): Json<serde_json::Value>,
+    Json(payload): Json<ShortenReq>,
 ) -> Result<Json<Shorten>, AppError> {
-    let url = payload["url"].as_str().unwrap();
+    let url = payload.url;
 
     //查询数据库有无数据记录，根据url查找
     let one_data: Option<Shorten> = sqlx::query_as("SELECT * FROM shorten WHERE url = $1")
-        .bind(url)
+        .bind(&url)
         .fetch_optional(&state.pool)
         .await?;
 
@@ -37,7 +42,7 @@ pub(crate) async fn create_shorten_link(
             //更新数据库
             let update_id = data.id;
             sqlx::query_as("UPDATE shorten SET url = $1 WHERE id = $2  RETURNING *")
-                .bind(url)
+                .bind(&url)
                 .bind(update_id)
                 .fetch_one(&state.pool)
                 .await?
