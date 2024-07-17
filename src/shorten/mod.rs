@@ -30,6 +30,7 @@ struct DataBase {
 #[derive(Debug, Serialize, Deserialize)]
 struct Config {
     //重命名为“database”
+    #[serde(rename="database")]
     data_base: DataBase,
 }
 
@@ -63,7 +64,7 @@ impl Config {
     fn get_db_url(self) -> String {
         let database = self.data_base;
         let url = format!(
-            "DATABASE_URL=postgres://{}:{}@{}/{}",
+            "postgres://{}:{}@{}/{}",
             database.user, database.password, database.host, database.dbname
         );
         info!("db url:{}", url);
@@ -82,8 +83,7 @@ impl AppState {
         let pool = PgPoolOptions::new()
             .max_connections(5)
             .connect(&db_url)
-            .await
-            .unwrap();
+            .await?;
 
         let app = Self { pool };
         Ok(app)
