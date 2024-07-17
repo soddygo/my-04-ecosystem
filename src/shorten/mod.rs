@@ -35,7 +35,8 @@ struct Config {
 }
 
 #[derive(Debug, Error)]
-pub(crate) enum AppError {
+pub(crate) enum 
+AppError {
     #[error("data error")]
     DbError(#[from] sqlx::Error),
 

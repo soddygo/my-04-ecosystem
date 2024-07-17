@@ -9,7 +9,7 @@ use sqlx::{Decode, Error, FromRow};
 use std::future::Future;
 use std::sync::Arc;
 
-use anyhow::Result;
+use anyhow::{Ok, Result};
 use sqlx::postgres::PgQueryResult;
 
 #[derive(FromRow, Deserialize)]
@@ -26,7 +26,7 @@ pub(crate) struct Shorten {
 pub(crate) async fn create_shorten_link(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<serde_json::Value>,
-) -> Result<impl IntoResponse,AppError >{
+) -> Result<impl IntoResponse, AppError> {
     // todo!()
 
     let url = payload["url"].as_str().unwrap();
@@ -41,7 +41,7 @@ pub(crate) async fn create_shorten_link(
         Some(data) => {
             //更新数据库
             let update_id = data.id;
-          sqlx::query("UPDATE shorten SET url = $1 WHERE id = $2")
+            sqlx::query("UPDATE shorten SET url = $1 WHERE id = $2")
                 .bind(url)
                 .bind(update_id)
                 .execute(&state.pool)
@@ -56,10 +56,24 @@ pub(crate) async fn create_shorten_link(
         }
     }
 
-   Ok( "Hello, World!")
+    Ok("Hello, World!")
 }
 
-pub(crate) async fn get_shorten_link(Path(id): Path<String>) -> impl IntoResponse {
-    // todo!()
-    "Hello, World!"
+pub(crate) async fn get_shorten_link(
+    State(state): State<Arc<AppState>>,
+    Path(id): Path<String>,
+) -> Result<impl IntoResponse, AppError> {
+    let shorten: Option<Shorten> = sqlx::query("SELECT * FROM shorten WHERE id = $1")
+        .bind(id)
+        .fetch_optional(&state.pool)
+        .await?;
+
+    match shorten {
+        Some(data) => {
+            return data.url.into_response();
+        }
+        None => {
+            return anyhow::anyhow!("not found");
+        }
+    };
 }
