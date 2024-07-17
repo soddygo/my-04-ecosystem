@@ -21,7 +21,7 @@ async fn main() -> Result<()> {
     let tracer = init_trace()?;
     let opentelemetry = tracing_opentelemetry::layer().with_tracer(tracer);
 
-    let file_appender = tracing_appender::rolling::daily("my-04-ecosystem/fixtures/logs", "ecosystem.logs");
+    let file_appender = tracing_appender::rolling::daily("fixtures/logs", "ecosystem.logs");
     let (non_blocking, _guard) = tracing_appender::non_blocking(file_appender);
     let file = fmt::Layer::new()
         .with_writer(non_blocking)
