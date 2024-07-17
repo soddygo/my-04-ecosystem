@@ -12,7 +12,7 @@ use crate::shorten::{AppError, AppState};
 #[derive(FromRow, Deserialize, Serialize)]
 pub(crate) struct Shorten {
     #[sqlx(default)]
-    id: i32,
+    id: i64,
     #[sqlx(default)]
     url: String,
     #[sqlx(default)]
