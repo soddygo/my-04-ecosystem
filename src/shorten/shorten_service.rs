@@ -51,7 +51,6 @@ pub(crate) async fn create_shorten_link(
         }
     };
 
-    // let id = shorten_one
     let json = Json(shorten_one);
     return Ok(json);
 }
@@ -65,10 +64,7 @@ pub(crate) async fn get_shorten_link(
         .fetch_optional(&state.pool)
         .await?;
 
-    // if let Some(data) = shorten {
-    //     let json = Json(data);
-    //     return Ok(json);
-    // }
+
     match shorten {
         Some(data) => Ok(Json(data)),
         None => Err(AppError::AnyError(anyhow!("Resource not found"))),
