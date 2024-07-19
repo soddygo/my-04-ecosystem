@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use crate::shorten::{AppError, AppState};
 use anyhow::anyhow;
 use axum::extract::{Path, State};
 use axum::response::{IntoResponse, Redirect};
@@ -8,7 +9,6 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::{Decode, FromRow};
 use tracing::info;
-use crate::shorten::{AppError, AppState};
 
 #[derive(FromRow, Deserialize, Serialize)]
 pub(crate) struct Shorten {
@@ -65,11 +65,11 @@ pub(crate) async fn get_shorten_link(
     State(state): State<Arc<AppState>>,
     Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
-
     info!("get shorten link by id: {}", id);
 
+    let int_number = id.parse::<i64>()?;
     let shorten: Option<Shorten> = sqlx::query_as("SELECT * FROM shorten WHERE id = $1")
-        .bind(id)
+        .bind(int_number)
         .fetch_optional(&state.pool)
         .await?;
 

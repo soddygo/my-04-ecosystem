@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{Pool, Postgres};
 use std::fs;
+use std::num::ParseIntError;
 use std::sync::Arc;
 use thiserror::Error;
 use tracing::log::{info, log, logger};
@@ -30,18 +31,20 @@ struct DataBase {
 #[derive(Debug, Serialize, Deserialize)]
 struct Config {
     //重命名为“database”
-    #[serde(rename="database")]
+    #[serde(rename = "database")]
     data_base: DataBase,
 }
 
 #[derive(Debug, Error)]
-pub(crate) enum 
-AppError {
+pub(crate) enum AppError {
     #[error("data error:{0}")]
     DbError(#[from] sqlx::Error),
 
     #[error("general error: {0}")]
     AnyError(#[from] anyhow::Error),
+
+    #[error("parse int error:{0}")]
+    ParseError(#[from] ParseIntError),
 
     #[error("Not found: {0}")]
     NotFound(String),
