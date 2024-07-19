@@ -7,7 +7,7 @@ use axum::Json;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::{Decode, FromRow};
-
+use tracing::info;
 use crate::shorten::{AppError, AppState};
 
 #[derive(FromRow, Deserialize, Serialize)]
@@ -65,6 +65,9 @@ pub(crate) async fn get_shorten_link(
     State(state): State<Arc<AppState>>,
     Path(id): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
+
+    info!("get shorten link by id: {}", id);
+
     let shorten: Option<Shorten> = sqlx::query_as("SELECT * FROM shorten WHERE id = $1")
         .bind(id)
         .fetch_optional(&state.pool)
@@ -73,7 +76,7 @@ pub(crate) async fn get_shorten_link(
     match shorten {
         Some(data) => {
             let redirect = Redirect::to(&data.url);
-
+            info!("redirect to {}", data.url);
             Ok(redirect)
         }
         None => Err(AppError::AnyError(anyhow!("Resource not found"))),
