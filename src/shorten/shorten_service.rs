@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use anyhow::anyhow;
 use axum::extract::{Path, State};
+use axum::response::{IntoResponse, Redirect};
 use axum::Json;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -19,8 +20,8 @@ pub(crate) struct Shorten {
     created_at: DateTime<Utc>,
 }
 
-#[derive(Debug,Deserialize,Clone)]
-pub(crate) struct ShortenReq{
+#[derive(Debug, Deserialize, Clone)]
+pub(crate) struct ShortenReq {
     url: String,
 }
 
@@ -63,15 +64,18 @@ pub(crate) async fn create_shorten_link(
 pub(crate) async fn get_shorten_link(
     State(state): State<Arc<AppState>>,
     Path(id): Path<String>,
-) -> Result<Json<Shorten>, AppError> {
+) -> Result<impl IntoResponse, AppError> {
     let shorten: Option<Shorten> = sqlx::query_as("SELECT * FROM shorten WHERE id = $1")
         .bind(id)
         .fetch_optional(&state.pool)
         .await?;
 
-
     match shorten {
-        Some(data) => Ok(Json(data)),
+        Some(data) => {
+            let redirect = Redirect::to(&data.url);
+
+            Ok(redirect)
+        }
         None => Err(AppError::AnyError(anyhow!("Resource not found"))),
     }
 }

@@ -2,6 +2,7 @@
 GET http://127.0.0.1:3000/
 
 ###
+# @name createRequest
 POST http://127.0.0.1:3000/create HTTP/1.1
 content-type: application/json
 
@@ -9,3 +10,8 @@ content-type: application/json
   "url": "https://www.google.com"
 }
 
+###
+@requestId = {{createRequest.response.body.*.id}}
+
+# @name getRequest
+GET http://127.0.0.1:3000/{{requestId}} HTTP/1.1
