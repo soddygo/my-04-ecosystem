@@ -1,5 +1,6 @@
+mod chat;
 mod shorten;
 
-fn test()  {
+fn test() {
     println!("hello")
 }

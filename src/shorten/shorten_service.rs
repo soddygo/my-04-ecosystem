@@ -58,7 +58,7 @@ pub(crate) async fn create_shorten_link(
     };
 
     let json = Json(shorten_one);
-    return Ok(json);
+    Ok(json)
 }
 
 pub(crate) async fn get_shorten_link(

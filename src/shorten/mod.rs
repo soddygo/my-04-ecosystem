@@ -60,7 +60,7 @@ impl IntoResponse for AppError {
 
         (
             status_code,
-            format!("Something went wrong: {}", self.to_string()),
+            format!("Something went wrong: {}", self),
         )
             .into_response()
     }
@@ -75,7 +75,7 @@ impl Config {
             database.user, database.password, database.host, database.dbname
         );
         info!("db url:{}", url);
-        return url;
+        url
     }
 }
 
