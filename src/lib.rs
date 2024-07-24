@@ -1,6 +1,2 @@
-mod chat;
+#[allow(unused)]
 mod shorten;
-
-fn test() {
-    println!("hello")
-}

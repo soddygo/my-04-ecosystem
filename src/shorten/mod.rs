@@ -15,6 +15,7 @@ use std::sync::Arc;
 use thiserror::Error;
 use tracing::log::{info, log, logger};
 
+#[allow(unused)]
 #[derive(Debug)]
 struct AppState {
     pool: Pool<Postgres>,
@@ -58,11 +59,7 @@ impl IntoResponse for AppError {
             _ => StatusCode::INTERNAL_SERVER_ERROR,
         };
 
-        (
-            status_code,
-            format!("Something went wrong: {}", self),
-        )
-            .into_response()
+        (status_code, format!("Something went wrong: {}", self)).into_response()
     }
 }
 

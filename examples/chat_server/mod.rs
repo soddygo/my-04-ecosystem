@@ -4,8 +4,8 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use dashmap::DashMap;
-use futures::{SinkExt, StreamExt};
 use futures::stream::SplitStream;
+use futures::{SinkExt, StreamExt};
 use sqlx::{Pool, Postgres};
 use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
@@ -31,13 +31,12 @@ struct Peer {
     stream: SplitStream<Framed<TcpStream, LinesCodec>>,
 }
 
-#[tokio::main]
-async fn chat_server() -> Result<()> {
+pub async fn chat_server() -> Result<()> {
     let app_state = Arc::new(AppChatState {
         chat_map: DashMap::new(),
     });
 
-    let address = "127.0.0.0:8080";
+    let address = "127.0.0.1:8080";
 
     info!("listening on {}", address);
     let listener = tokio::net::TcpListener::bind(address).await?;
@@ -150,7 +149,7 @@ impl Display for Message {
                 write!(f, "left[{}]", content)
             }
             Message::Chat { sender, content } => {
-                write!(f, "chat[{}]:{}", sender, content)
+                write!(f, "chat_server[{}]:{}", sender, content)
             }
         }
     }

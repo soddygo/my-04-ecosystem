@@ -6,6 +6,8 @@ use tokio::{
     time::sleep,
 };
 
+mod chat_server;
+
 fn main() {
     let handle = thread::spawn(|| {
         let rt = Builder::new_current_thread().enable_all().build().unwrap();

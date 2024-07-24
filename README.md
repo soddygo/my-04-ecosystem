@@ -1,5 +1,37 @@
 # Geektime Rust 语言训练营
 
+## 练习
+### chat 练习
+server执行命令:
+```shell
+cargo run --example chat
+
+```
+
+客户端执行命令:
+```shell
+nc localhost 8080
+```
+
+
+### shorten练习
+环境准备
+* postgresql 数据库
+* 数据库:chat
+第一次初始化
+```shell
+sqlx database crate
+```
+
+启动命令:
+```shell
+cargo run
+```
+
+在项目目录下,fixtures文件夹下,http_test.rest,进行测试.
+
+后再浏览器里验证跳转成功.
+
 ## 环境设置
 
 ### 安装 Rust

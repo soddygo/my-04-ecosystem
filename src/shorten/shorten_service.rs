@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use crate::shorten::{AppError, AppState};
 use anyhow::anyhow;
 use axum::extract::{Path, State};
 use axum::response::{IntoResponse, Redirect};
@@ -10,6 +9,9 @@ use serde::{Deserialize, Serialize};
 use sqlx::{Decode, FromRow};
 use tracing::info;
 
+use crate::shorten::{AppError, AppState};
+
+#[allow(unused)]
 #[derive(FromRow, Deserialize, Serialize)]
 pub(crate) struct Shorten {
     #[sqlx(default)]
