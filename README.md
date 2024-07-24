@@ -21,6 +21,7 @@ nc localhost 8080
 第一次初始化
 ```shell
 sqlx database crate
+sqlx migrate run
 ```
 
 启动命令:
